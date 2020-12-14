@@ -1,5 +1,5 @@
 steps:
-name: HA Driver CI
+name: HA Driver Build
 on: [push]
 jobs:
   build:
@@ -12,5 +12,5 @@ jobs:
       uses: warrenbuckley/Setup-MSBuild@v1
 
     - name: MSBuild
-      working-directory: src
-      run: msbuild MyProject.csproj
+      working-directory: CrestronHomeAssistantDriver
+      run: msbuild CrestronHomeAssistantDriver.csproj
