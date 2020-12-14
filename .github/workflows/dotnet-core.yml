@@ -7,8 +7,8 @@ jobs:
     steps:
     - uses: actions/checkout@master
 
-    - name: Setup MSBuild.exe
-      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: setup-msbuild
+      uses: microsoft/setup-msbuild@v1.0.2
 
     - name: MSBuild
       working-directory: CrestronHomeAssistantDriver
