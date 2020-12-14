@@ -1,7 +1,6 @@
 namespace RokuPlayer.VideoServer {
     public static class Constants {
-        public const string DefaultAccessToken =
-    "Your Device Token";
+        public const string DefaultAccessToken = "Your Device Token";
 
         public const string EntityIdPostfix = "roku";
 
