@@ -1,0 +1,31 @@
+  
+name: Build on push
+
+on: [push]
+
+jobs:
+  build:
+    name: Build
+
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@master
+
+    - name: Setup Nuget.exe
+      uses: warrenbuckley/Setup-Nuget@v1
+
+    - name: Nuget Restore 
+      run: nuget restore .\WorkflowTest\WorkflowTest.sln
+
+    - name: Add msbuild to PATH
+      uses: microsoft/setup-msbuild@v1.0.0
+
+    - name: Build Solution 
+      run: msbuild.exe .\CrestronHomeAssistantDriver.sln -p:Configuration=Release
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v1
+      with:
+        name: cpz
+        path: CrestronHomeAssistantDriver\CrestronHomeAssistantDriver\bin\Release\CrestronHomeAssistantDriver.cpz
