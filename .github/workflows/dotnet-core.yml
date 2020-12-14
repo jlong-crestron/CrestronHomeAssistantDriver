@@ -1,4 +1,3 @@
-steps:
 name: HA Driver Build
 on: [push]
 jobs:
