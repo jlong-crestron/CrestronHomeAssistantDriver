@@ -133,7 +133,10 @@
     <Compile Include="Constants.cs" />
     <Compile Include="Controllers\HomeAssistant.cs" />
     <Compile Include="events\DataEventArgs.cs" />
-    <Compile Include="Models\HomeAssistantMediaPlayer.cs" />
+    <Compile Include="Models\MediaPlayer.cs" />
+    <Compile Include="Models\Auth.cs" />
+    <Compile Include="Models\Command.cs" />
+    <Compile Include="Models\Event.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="transports\WebSockets.cs" />
   </ItemGroup>
