@@ -34,29 +34,6 @@ namespace Crestron.HomeAssistant.Models
 
         public class ErrorObject
         {
-            // This is an int in the docs, but in practice, apparently it's a string
-            public enum Code
-            {
-                Unknown = 0, // Not valid from HA
-                NonIncreasingId = 1,
-                IncorrectFormat = 2,
-                ItemNotFound = 3,
-                NumberOfCodes,
-            }
-
-            public Code ErrorCode
-            {
-                get
-                {
-                    if (Enum.IsDefined(typeof(Code), code))
-                    {
-                        return (Code) code;
-                    }
-
-                    return Code.Unknown;
-                }
-            }
-
             // int in docs, string in reality
             [JsonProperty(PropertyName = "code")]
             public string Code { get; set; }
