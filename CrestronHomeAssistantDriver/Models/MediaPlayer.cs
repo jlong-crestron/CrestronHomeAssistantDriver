@@ -4,12 +4,6 @@ using Newtonsoft.Json;
 
 namespace Crestron.HomeAssistant.Models
 {
-    public class BaseCommandObject
-    {
-        [JsonProperty(PropertyName = "type")]
-        public string CommandType { get; set; }
-    }
-
     // https://www.home-assistant.io/integrations/media_player/
     public static class MediaPlayerServiceData
     {
@@ -165,7 +159,7 @@ namespace Crestron.HomeAssistant.Models
         public string EntityPictureUrl { get; set; }
 
         // Stuff that may be very specific that we likely don't care about
-#if false
+
         // Might be denon-specific
         [JsonProperty(PropertyName = "sound_mode_raw")]
         public string SoundModeRaw { get; set; }
@@ -181,7 +175,6 @@ namespace Crestron.HomeAssistant.Models
         // "receiver" on 4k roku box (media_player)
         [JsonProperty(PropertyName = "device_class")]
         public string DeviceClass { get; set; }
-#endif
 
     }
 }

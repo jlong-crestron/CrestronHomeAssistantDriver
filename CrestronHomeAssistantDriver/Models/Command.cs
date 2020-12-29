@@ -4,6 +4,12 @@ using Newtonsoft.Json;
 
 namespace Crestron.HomeAssistant.Models
 {
+    public class BaseCommandObject
+    {
+        [JsonProperty(PropertyName = "type")]
+        public string CommandType { get; set; }
+    }
+
     public class CommandObject : BaseCommandObject
     {
         // ID should be always increasing with each command sent.
@@ -29,7 +35,6 @@ namespace Crestron.HomeAssistant.Models
         public class ErrorObject
         {
             // This is an int in the docs, but in practice, apparently it's a string
-#if false
             public enum Code
             {
                 Unknown = 0, // Not valid from HA
@@ -51,7 +56,6 @@ namespace Crestron.HomeAssistant.Models
                     return Code.Unknown;
                 }
             }
-#endif
 
             // int in docs, string in reality
             [JsonProperty(PropertyName = "code")]
@@ -102,6 +106,7 @@ namespace Crestron.HomeAssistant.Models
         [JsonProperty(PropertyName = "entity_id")]
         public string EntityId { get; set; }
     }
+    
 
     // I took this from the media_player spec. I have not tested this to see
     // if it works on roku

@@ -21,7 +21,7 @@ namespace Crestron.HomeAssistant.Models
             AccessToken = accessToken;
         }
 
-                // Set by us when we use AuthSendToken
+        // Set by us when we use AuthSendToken
         [JsonProperty(PropertyName = "access_token")]
         public string AccessToken { get; set; }
 

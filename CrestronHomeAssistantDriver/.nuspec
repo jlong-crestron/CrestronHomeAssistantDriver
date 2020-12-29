@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+    <metadata>
+        <!-- Required elements-->
+        <id></id>
+        <version>0.0.1</version>
+        <description>SimplSharp library for controlling Home Assistant</description>
+        <authors> Josh Long</authors>
+    </metadata>
+    <!-- Optional 'files' node -->
+</package>
