@@ -1,8 +1,11 @@
 using System;
+
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
 using Crestron.SimplSharp.CrestronWebSocketClient;
+using Crestron.SimplSharp.CrestronIO;
 
 using Crestron.HomeAssistant.Events;
 using Crestron.HomeAssistant.Transports;
@@ -13,12 +16,14 @@ namespace Crestron.HomeAssistant.Controllers
     // TODO: Create base Controller object for higher ordeance classes to derive basic behaviors from.
     public class HomeAssistantWebSocketController
     {
+        private string _configFileName = "configuration.json";
         private BasicWebSocket _socket;
+        private Configuration _config;
         private readonly JsonSerializerSettings _jsonSettings;
         private readonly Action<string> _sendJson;
         private readonly Action<string> _log;
         private ulong _commandId;
-        private readonly WebSocketLocation _loc;
+        private WebSocketLocation _loc;
 
         // TODO: Prevent unhandled responses from building up, and use that to retry
         // Note: In testing, it seems you are not allowed to send a second
@@ -26,8 +31,9 @@ namespace Crestron.HomeAssistant.Controllers
         // dictionary here, just compare the previous command ID to what we get
         // back.
         private readonly Dictionary<ulong, Action<CommandResponseObject>> _responseActions;
+
         // buffer size for response payloads for the websocket transport.
-        // Probably shouldnt be residing here .... 
+        // Should this be a configuration setting? might be too implementation specific. haevent seen issues with current size of responses thus far.
         private const ulong _rxBufSize = 16384;
 
         // When we get a state change event or poll. State may actually be the same
@@ -36,31 +42,75 @@ namespace Crestron.HomeAssistant.Controllers
 
         public string AccessToken { protected get; set; }
 
-        public HomeAssistantWebSocketController(WebSocketLocation location, Action<string> log, string accessToken)
+        public HomeAssistantWebSocketController(Action<string> log, string configPath)
         {
             _log = log;
-            _loc = location;
-            AccessToken = accessToken;
-
-            _socket = new BasicWebSocket(_rxBufSize, _log);
-            _sendJson = _socket.SendMethod;
-            _responseActions = new Dictionary<ulong, Action<CommandResponseObject>>();
+            
             _jsonSettings = new JsonSerializerSettings()
             {
                 MissingMemberHandling = MissingMemberHandling.Ignore,
                 NullValueHandling = NullValueHandling.Ignore
             };
 
+            _socket = new BasicWebSocket(_rxBufSize, _log);
+            _sendJson = _socket.SendMethod;
+
             _socket.ConnectionStateChange += OnConnected;
             _socket.DataReceived += OnDataReceived;
-            _socket.Setup(_loc);
-            _socket.ConnectClient();
+
+            ParseConfig();
+            ConfigureSocket();
+
+            _responseActions = new Dictionary<ulong, Action<CommandResponseObject>>();
         }
 
         public void Dispose()
         {
             _socket.ConnectionStateChange -= OnConnected;
             _socket.DataReceived -= OnDataReceived;
+        }
+
+        private void ConfigureSocket()
+        {
+            try {
+                _loc = new WebSocketLocation() {
+                    Host = _config.Host,
+                    Port = _config.Port,
+                    Path = _config.Path,
+                    Secure = _config.Secure,
+                };
+
+                AccessToken = _config.DefaultAccessToken;
+                
+                _socket.Setup(_loc);
+                // Should this be wrapped such that the consumer can control when it 
+                _socket.ConnectClient();
+            } catch(Exception error) 
+            {
+                _log(error.Message);
+            }         
+        }
+
+        private bool ParseConfig()
+        {
+            try 
+            {
+                string assemLocation = System.Reflection.Assembly.GetAssembly(typeof(HomeAssistantWebSocketController)).Location;
+                string dir = Path.GetDirectoryName(assemLocation);
+                string path = dir + "/" + _configFileName;
+                Log("resolving configuration at location: {0}", path);
+                using (StreamReader file = File.OpenText(path))
+                {
+                    JsonSerializer serializer = new JsonSerializer();
+                    _config = (Configuration)serializer.Deserialize(file, typeof(Configuration));
+                }
+                return true;
+            } catch(Exception error )
+            {
+                Log(error.Message);
+            }
+
+            return false;
         }
 
         private void SendCommandWithoutId(BaseCommandObject cmd)
@@ -204,7 +254,6 @@ namespace Crestron.HomeAssistant.Controllers
             if (success)
             {
                 Log("Authentication successful");
-                SubscribeToChanges();
             }
             else
             {
