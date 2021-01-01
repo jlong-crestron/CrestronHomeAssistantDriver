@@ -1,0 +1,8 @@
+{
+    "host": "<ADDRESS OF YOUR HA INSTANCE>",
+    "port": 8123,
+    "path": "/api/websocket",
+    "accessToken": "<YOUR ACCESS TOKEN>",
+    "secure": false,
+    "debug": true
+}
